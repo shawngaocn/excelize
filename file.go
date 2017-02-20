@@ -4,13 +4,18 @@ import (
 	"archive/zip"
 	"bytes"
 	"os"
+	"strings"
 )
 
 // CreateFile provide function to create new file by default template.
 // For example:
 // xlsx := CreateFile()
-func CreateFile() *File {
+func CreateFile(sheetName string) *File {
 	file := make(map[string]string)
+	workbook := templateWorkbook
+	if len(sheetName) > 0 {
+		workbook = strings.Replace(templateWorkbook, "Sheet1", sheetName, -1)
+	}
 	file[`_rels/.rels`] = templateRels
 	file[`docProps/app.xml`] = templateDocpropsApp
 	file[`docProps/core.xml`] = templateDocpropsCore
@@ -18,7 +23,7 @@ func CreateFile() *File {
 	file[`xl/theme/theme1.xml`] = templateTheme
 	file[`xl/worksheets/sheet1.xml`] = templateSheet
 	file[`xl/styles.xml`] = templateStyles
-	file[`xl/workbook.xml`] = templateWorkbook
+	file[`xl/workbook.xml`] = workbook
 	file[`[Content_Types].xml`] = templateContentTypes
 	return &File{
 		XLSX: file,
